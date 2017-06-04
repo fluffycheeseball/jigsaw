@@ -11,36 +11,39 @@ export class SmileyDirective {
     private top: number;
     private dragon: boolean;
     private last: any;
+    private imgW :number;
+    private imgH :number;
+    private Erase: ImageData;
     @Input('size') size: number;
     @Input('color') color: string;
 
     constructor(private el: ElementRef, private renderer: Renderer) {
-         console.log("SmileyDirective constructor: size: ", this.size, ", color: ", this.color, ', this.canvas: ', this.canvas);
+      //   console.log("SmileyDirective constructor: size: ", this.size, ", color: ", this.color, ', this.canvas: ', this.canvas);
     }
 
      @HostListener('mousedown', ['$event'])
      mouseDown(event: MouseEvent) {
          this.dragon = true;
-    //      var mousePos = this.getMousePos( event);
- //   this.draw(mousePos.x,mousePos.y)
+         this.imgW = 226;
+         this.imgH = 226;
   } 
 
-       @HostListener('mouseup') mouseUp(event: MouseEvent) {
+    @HostListener('mouseup') mouseUp(event: MouseEvent) {
            this.dragon = false;
-  //  console.log("mouse up");
-  } 
+    } 
 
-       @HostListener('mousemove', ['$event']) 
-       mouseMove(event: MouseEvent) {
-           if(this.dragon) {
-               this.last = this.getMousePos(event);
-         // var mousePos = this.getMousePos( event);
-    this.draw(this.last.x,this.last.y)
-           }
-  } 
+    @HostListener('mousemove', ['$event']) 
+    mouseMove(event: MouseEvent) {
+        if(this.dragon) {
+            this.removeOld();
+        
+            this.draw(this.last.x,this.last.y)
+            this.last = this.getMousePos(event);
+        }
+    } 
 
     ngOnInit() {
-         console.log("SmileyDirective ngOnInit: size: ", this.size, ", color: ", this.color, ', this.canvas: ', this.canvas);
+       //  console.log("SmileyDirective ngOnInit: size: ", this.size, ", color: ", this.color, ', this.canvas: ', this.canvas);
     }
 
     ngAfterViewInit() {
@@ -54,23 +57,53 @@ export class SmileyDirective {
     getMousePos( evt) {
         var rect = this.canvas.getBoundingClientRect();
         return {
-          x: evt.clientX - rect.left,
-          y: evt.clientY - rect.top
+          x: Math.round(evt.clientX - rect.left),
+          y: Math.round(evt.clientY - rect.top)
         };
     } 
 
     draw(left: number, top:number) {
         if (this.canvas.getContext) {
             let canvas = this.canvas;
-            if (canvas.getContext){
+            if (canvas.getContext) {
                 var ctx = canvas.getContext('2d');
-        var imageObj = new Image();
-
-        imageObj.onload = function() {
-            ctx.drawImage(imageObj, left, top);
-        };
-        imageObj.src = '../../biggrin.png';
-        }
+                var imageObj = new Image();
+                imageObj.onload = function() {
+                     ctx.drawImage(imageObj, left, top);
+                      return 
+                };
+            imageObj.src = '../../biggrin.png';
+            }
         }
     }
+
+    LoadImage
+
+  getErase (ctx: any){
+  if (this.Erase == undefined) {
+       this.Erase = ctx.createImageData(226,226);
+        for (var i = this.Erase.data.length; --i >= 0; )
+        this.Erase.data[i] = 0;
+  }
+  }
+
+   removeOld() {
+        if (this.canvas.getContext) {
+            let canvas = this.canvas;
+            if (canvas.getContext) {
+                var ctx = canvas.getContext('2d');
+            }
+            if(this.last == undefined)
+            {
+                this.last = new Object();
+                this.last.x = 0;
+                this.last.y = 0;
+            }
+this.getErase(ctx)
+        ctx.putImageData(this.Erase, this.last.x, this.last.y);
+        }
+
+
+   }
+   
 }
