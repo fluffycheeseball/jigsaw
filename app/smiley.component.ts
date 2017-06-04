@@ -10,6 +10,7 @@ export class SmileyDirective {
     private left: number;
     private top: number;
     private dragon: boolean;
+    private last: any;
     @Input('size') size: number;
     @Input('color') color: string;
 
@@ -32,8 +33,9 @@ export class SmileyDirective {
        @HostListener('mousemove', ['$event']) 
        mouseMove(event: MouseEvent) {
            if(this.dragon) {
-          var mousePos = this.getMousePos( event);
-    this.draw(mousePos.x,mousePos.y)
+               this.last = this.getMousePos(event);
+         // var mousePos = this.getMousePos( event);
+    this.draw(this.last.x,this.last.y)
            }
   } 
 
