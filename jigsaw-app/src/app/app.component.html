@@ -1,13 +1,6 @@
 <h1>
   {{title}}
-  <div>
-    <div class='wrapper'>
-      <div class='container' [dragula]='"first-bag"'>
-        <div><img class="img-responsive" src="assets/images/growl.jpg"></div>
-      </div>
-      <div class='container' [dragula]='"first-bag"' style="background-color:rgb(255,0,0);">
-          <div><img class="img-responsive" src="assets/images/biggrin.png"></div>
+      <div >
+          <div [ng2-draggable]="true"><img class="img-responsive" src="assets/images/biggrin.png"></div>
        </div> 
-    </div>
-  </div>
 </h1>
